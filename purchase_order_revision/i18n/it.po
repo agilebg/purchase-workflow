@@ -6,27 +6,21 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-18 18:17+0000\n"
-"PO-Revision-Date: 2014-02-06 12:57+0000\n"
-"Last-Translator: Lorenzo Battistini - Agile BG "
-"<lorenzo.battistini@agilebg.com>\n"
+"POT-Creation-Date: 2017-09-20 15:37+0000\n"
+"PO-Revision-Date: 2017-09-20 17:39+0200\n"
+"Last-Translator: Alex Comba <alex.comba@agilebg.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-05-31 05:59+0000\n"
-"X-Generator: Launchpad (build 17031)\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 2.0.1\n"
 
 #. module: purchase_order_revision
-#: field:purchase.order,old_revision_ids:0
-msgid "Old revisions"
-msgstr "Vecchie revisioni"
-
-#. module: purchase_order_revision
-#: code:addons/purchase_order_revision/purchase.py:41
-#, python-format
-msgid "This only works for 1 PO at a time"
-msgstr "Questo funziona solo per un ordine alla volta"
+#: field:purchase.order,active:0
+msgid "Active"
+msgstr "Attivo"
 
 #. module: purchase_order_revision
 #: field:purchase.order,current_revision_id:0
@@ -34,12 +28,7 @@ msgid "Current revision"
 msgstr "Revisione corrente"
 
 #. module: purchase_order_revision
-#: model:ir.model,name:purchase_order_revision.model_purchase_order
-msgid "Purchase Order"
-msgstr "Ordine Acquisto"
-
-#. module: purchase_order_revision
-#: code:addons/purchase_order_revision/purchase.py:41
+#: code:addons/purchase_order_revision/purchase.py:55
 #, python-format
 msgid "Error"
 msgstr "Errore"
@@ -50,6 +39,45 @@ msgid "New revision"
 msgstr "Nuova revisione"
 
 #. module: purchase_order_revision
+#: code:addons/purchase_order_revision/purchase.py:77
+#, python-format
+msgid "New revision created: %s"
+msgstr "Nuova revisione creata: %s"
+
+#. module: purchase_order_revision
+#: field:purchase.order,old_revision_ids:0
+msgid "Old revisions"
+msgstr "Vecchie revisioni"
+
+#. module: purchase_order_revision
+#: field:purchase.order,unrevisioned_name:0
+msgid "Order Reference"
+msgstr "Vecchia Referenza"
+
+#. module: purchase_order_revision
+#: sql_constraint:purchase.order:0
+msgid "Order Reference and revision must be unique per Company."
+msgstr "Order Reference and revision must be unique per Company."
+
+#. module: purchase_order_revision
+#: code:_description:0
+#: model:ir.model,name:purchase_order_revision.model_purchase_order
+#, python-format
+msgid "Purchase Order"
+msgstr "Ordine Acquisto"
+
+#. module: purchase_order_revision
+#: field:purchase.order,revision_number:0
+msgid "Revision"
+msgstr "Revision"
+
+#. module: purchase_order_revision
 #: view:purchase.order:0
 msgid "Revisions"
 msgstr "Revisioni"
+
+#. module: purchase_order_revision
+#: code:addons/purchase_order_revision/purchase.py:55
+#, python-format
+msgid "This only works for 1 PO at a time"
+msgstr "Questo funziona solo per un ordine alla volta"

@@ -21,17 +21,22 @@
 
 {
     'name': "Purchase order revisions",
-    'version': '0.1',
+    'version': '7.0.1.0.1',
     'category': 'Purchase Management',
     'description': """
 Revisions for purchase orders (and requests for quotation)
 ==========================================================
 
-On canceled orders, you can click on 'new revision' and the 'old revisions'
-tab of the just created request for quotation will contain all the old
-(canceled orders) revisions.
-So that you can track every change you made to your requests for quotation and
-purchase orders.
+On canceled orders, you can click on "New revision" button. This
+will create a new revision of the quotation, with the same base number and a
+'-revno' suffix appended. A message is added in the chatter saying that a new
+revision was created.
+
+In the form view, a new tab is added that lists the previous revisions, with
+the date they were made obsolete and the user who performed the action.
+
+The old revisions of a purchase order are flagged as inactive, so they don't
+clutter up searches.
 """,
     'author': "Agile Business Group,Odoo Community Association (OCA)",
     'website': 'http://www.agilebg.com',

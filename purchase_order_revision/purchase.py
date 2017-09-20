@@ -29,40 +29,63 @@ class purchase_order(orm.Model):
 
     _columns = {
         'current_revision_id': fields.many2one(
-            'purchase.order', 'Current revision', readonly=True),
+            'purchase.order', 'Current revision', copy=True, readonly=True),
         'old_revision_ids': fields.one2many(
             'purchase.order', 'current_revision_id',
-            'Old revisions', readonly=True),
+            'Old revisions', context={'active_test': False}, readonly=True),
+        'revision_number': fields.integer('Revision', copy=False),
+        'unrevisioned_name': fields.char(
+            'Order Reference', copy=False, readonly=True),
+        'active': fields.boolean('Active', readonly=True),
     }
+
+    _defaults = {
+        'active': True,
+    }
+
+    _sql_constraints = [
+        ('revision_unique',
+         'unique(unrevisioned_name, revision_number, company_id)',
+         'Order Reference and revision must be unique per Company.'),
+    ]
 
     def new_revision(self, cr, uid, ids, context=None):
         if len(ids) > 1:
             raise orm.except_orm(
                 _('Error'), _('This only works for 1 PO at a time'))
         po = self.browse(cr, uid, ids[0], context)
-        new_seq = self.pool.get('ir.sequence').get(
-            cr, uid, 'purchase.order') or '/'
-        old_seq = po.name
-        po.write({'name': new_seq}, context=context)
+        old_name = po.name
+        revno = po.revision_number
+        po.write({'name': '%s-%02d' % (po.unrevisioned_name, revno + 1),
+                 'revision_number': revno + 1})
         # 'orm.Model.copy' is called instead of 'self.copy' in order to avoid
         # 'purchase.order' method to overwrite our values, like name and state
-        orm.Model.copy(self, cr, uid, po.id, default={
-            'name': old_seq,
-            'state': 'cancel',
-            'shipped': False,
-            'invoiced': False,
-            'invoice_ids': [],
-            'picking_ids': [],
-            'old_revision_ids': [],
-            'current_revision_id': po.id,
-        }, context=None)
+        defaults = {'name': old_name,
+                    'revision_number': revno,
+                    'active': False,
+                    'state': 'cancel',
+                    'current_revision_id': po.id,
+                    'unrevisioned_name': po.unrevisioned_name,
+                    'shipped': False,
+                    'invoiced': False,
+                    'picking_ids': [],
+                    'old_revision_ids': [],
+                    }
+        old_revision_id = orm.Model.copy(
+            self, cr, uid, po.id, default=defaults, context=context)
         self.action_cancel_draft(cr, uid, [po.id], context=context)
+        msg = _('New revision created: %s') % po.name
+        self.message_post(cr, uid, [po.id], body=msg, context=context)
+        self.message_post(
+            cr, uid, [old_revision_id], body=msg, context=context)
         return True
 
-    def copy(self, cr, uid, id, default=None, context=None):
-        if not default:
-            default = {}
-        default.update({
-            'old_revision_ids': [],
-        })
-        return super(purchase_order, self).copy(cr, uid, id, default, context)
+    def create(self, cr, uid, vals, context=None):
+        if 'unrevisioned_name' not in vals:
+            if vals.get('name', '/') == '/':
+                seq = self.pool['ir.sequence']
+                vals['name'] = seq.next_by_code(
+                    cr, uid, 'purchase.order', context=context) or '/'
+            vals['unrevisioned_name'] = vals['name']
+        return super(purchase_order, self).create(
+            cr, uid, vals, context=context)

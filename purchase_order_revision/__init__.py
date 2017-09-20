@@ -20,3 +20,9 @@
 ##############################################################################
 
 from . import purchase
+
+
+def fill_unrevisioned_name(cr, registry):
+    import pdb; pdb.set_trace()
+    cr.execute("UPDATE purchase_order set unrevisioned_name=name "
+               "WHERE unrevisioned_name IS NULL")
