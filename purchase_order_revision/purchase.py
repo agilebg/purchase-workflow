@@ -29,13 +29,13 @@ class purchase_order(orm.Model):
 
     _columns = {
         'current_revision_id': fields.many2one(
-            'purchase.order', 'Current revision', copy=True, readonly=True),
+            'purchase.order', 'Current revision', readonly=True),
         'old_revision_ids': fields.one2many(
             'purchase.order', 'current_revision_id',
             'Old revisions', context={'active_test': False}, readonly=True),
-        'revision_number': fields.integer('Revision', copy=False),
+        'revision_number': fields.integer('Revision'),
         'unrevisioned_name': fields.char(
-            'Order Reference', copy=False, readonly=True),
+            'Order Reference', readonly=True),
         'active': fields.boolean('Active', readonly=True),
     }
 
@@ -89,3 +89,19 @@ class purchase_order(orm.Model):
             vals['unrevisioned_name'] = vals['name']
         return super(purchase_order, self).create(
             cr, uid, vals, context=context)
+
+    def copy_data(self, cr, uid, id, default=None, context=None):
+        """ This trick is meant to allow duplication
+        preventing the copy of the following fields: old_revision_ids,
+        revision_number and unrevisioned_name
+        considering that in old API "copy=False" doesn't work
+        """
+        res = super(purchase_order, self).copy_data(
+            cr, uid, id, default=default, context=context)
+        if 'old_revision_ids' in res and res['old_revision_ids']:
+            del res['old_revision_ids']
+        if 'revision_number' in res and res['revision_number']:
+            del res['revision_number']
+        if 'unrevisioned_name' in res and res['unrevisioned_name']:
+            del res['unrevisioned_name']
+        return res
